@@ -1,6 +1,6 @@
 import React from "react";
 import SearchForm from "../components/SearchForm";
-import Results from "../components/Results";
+import Card from "../components/Card"
 import API from "../utils/API";
 import Wrapper from "../components/Wrapper";
 
@@ -14,20 +14,14 @@ class Search extends React.Component {
         this.searchBook();
     }
 
-    allBook = bookData => {
-        return {
-            _id: bookData.id,
-            title: bookData.volumeInfo.title,
-            authors: bookData.volumeInfo.authors,
-            description: bookData.volumeInfo.description,
-            image: bookData.volumeInfo.imageLinks.thumbnail,
-            link: bookData.volumeInfo.previewLink
-        }
-    }
-
-    searchBook = query => {
-        API.getBook(query)
-            .then(res => this.setState({ result: res.data.results }))
+    searchBook = (query) => {
+        console.log(query)
+        API.getBookAPI(query)
+            .then(res => {
+                console.log(res);
+                this.setState({ result: res.data.results })
+                console.log(this.state.result):
+            })
             .catch(err => console.error(err));
     };
 
@@ -41,9 +35,8 @@ class Search extends React.Component {
 
     handleFormSubmit = event => {
         event.preventDefault();
-        const filteredSearch = this.state.result.filter(book => book.bookData.volumeInfo.title.includes(this.state.search))
-        console.log(this.state.search);
-        this.setState({ result: filteredSearch })
+        this.getBookAPI(this.state.search);
+
     };
 
     clearSearch = event => {
@@ -67,17 +60,15 @@ class Search extends React.Component {
                     </div>
                     <div className="row">
                         <h2>Results</h2>
-                        {[...this.state.result].map((item) => (
-                            <Results
-                                _id={item.id}
-                                title={item.volumeInfo.title}
-                                authors={item.volumeInfo.authors}
-                                description={item.volumeInfo.description}
-                                image={item.volumeInfo.imageLinks.thumbnail}
-                                link={item.volumeInfo.previewLink}
-                                key={item.key}
+                            <Card
+                                _id={this.state.result.items.id}
+                                title={this.state.result.items.volumeInfo.title}
+                                authors={this.state.result.items.volumeInfo.authors}
+                                description={this.state.result.items.volumeInfo.description}
+                                image={this.state.result.items.volumeInfo.imageLinks.thumbnail}
+                                link={this.state.result.items.volumeInfo.previewLink}
+                                key={this.state.result.key}
                             />
-                        ))}
                     </div>
                 </div>
             </Wrapper>
